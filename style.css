@@ -1,0 +1,49 @@
+body {
+  padding: 0.5rem;
+}
+
+h1,
+h2,
+p {
+  font-family: sans-serif;
+}
+
+body > h1 {
+  text-align: center;
+}
+
+.movies {
+  display: flex;
+  flex-direction: column; 
+  gap: 0.5rem;
+
+}
+
+.movies > div {
+  display: flex;
+  align-items: center;
+  box-shadow: -3px 3px 5px black
+}
+
+.movies > div::after {
+  content: '';
+  width: 2px;
+  height: 200px;
+  background-color: gray;
+}
+
+.movies > div > img {
+  width: 150px;
+  height: 200px;
+}
+
+.movies > div > h2 {
+  margin-left: 2rem;
+}
+
+.movies > div > p {
+  background: url('assets/star.png') no-repeat 0 -80px;
+  margin-left: auto;
+  margin-right: 2rem;
+  padding-left: 1.5rem;
+}
