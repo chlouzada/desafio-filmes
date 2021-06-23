@@ -1,0 +1,23 @@
+{
+  "name": "desafio-filmes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",  
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chlzd/desafio-filmes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chlzd/desafio-filmes/issues"
+  },
+  "homepage": "https://github.com/chlzd/desafio-filmes#readme",
+  "devDependencies": {
+    "electron": "^13.1.4"
+  }
+}
