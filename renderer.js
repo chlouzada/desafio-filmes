@@ -10,16 +10,36 @@ const api_keyOMDb = "a0eda058";
 
 const el_movies = document.querySelector(".movies");
 
-async function getMovies() {
-  let request = new Request(
-    tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale
-  );
-  // const request = new Request("./teste.json");
-
+async function requestAPI(request){
   const response = await fetch(request);
   const data = await response.json();
+  return data;
+}
 
+async function getMovies() {
+  // let request = new Request(
+  //   tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale
+  // );
+  const request = new Request("./teste.json");
+  const data = await requestAPI(request);
   return data["results"];
+}
+
+async function getMoviesOMdbApi(movies) {
+  ratingOMdb = [];
+
+  movies.forEach(async (movie) => {
+      const request = new Request(
+        omdb_url + "?apikey=" + api_keyOMDb + "&t=" + movie["original_title"]
+      );
+      const data = await requestAPI(request);
+      if (data["Error"] == "Movie not found!")
+        ratingOMdb.push('notFound');
+      else
+        ratingOMdb.push(data["Ratings"]);
+        
+  });
+  return ratingOMdb;
 }
 
 function outputMovies(movies) {
@@ -40,6 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let movies;
   try {
     movies = await getMovies();
+    omdb_rating = await getMoviesOMdbApi(movies);
     outputMovies(movies);
   } catch (er) {
     console.log("Erro");
