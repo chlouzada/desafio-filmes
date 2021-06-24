@@ -57,11 +57,13 @@ function scoreEval(movies, ratings) {
   for (let i = 0; i < movies.length; i++) {
     const movie = movies[i];
 
-    if (ratings[i] == null) score[i] = movie['vote_average'];
+    if (ratings[i] == null) score[i] = movie["vote_average"];
     else {
-      score[i] = movie['vote_average'];
-      for (let j = 0; j < ratings[i].length; j++) {score[i] += ratings[i][j][1]};
-      score[i] = (score[i] / (ratings[i].length + 1)).toFixed(1)
+      score[i] = movie["vote_average"];
+      for (let j = 0; j < ratings[i].length; j++) {
+        score[i] += ratings[i][j][1];
+      }
+      score[i] = parseFloat((score[i] / (ratings[i].length + 1)).toFixed(1));
     }
   }
 
@@ -93,14 +95,33 @@ function outputMovies(movies) {
   el_movies.innerHTML = output;
 }
 
+function sortMovies(movies,ratings,score) {
+  let unsorted = new Array();
+  for (let index = 0; index < score.length; index++) {
+    unsorted.push({
+      score: score[index],
+      movie: movies[index],
+      ratings: ratings,
+    });
+  }
+
+  unsorted.sort(function (a, b) {
+    return b.score - a.score;
+  });
+
+  return unsorted;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const movies = await getMovies();
     const omdb_ratings = await getRatingsOMdbApi(movies);
-    let score = [];
-    
-    score = scoreEval(movies,omdb_ratings)
-    
+    let score = scoreEval(movies, omdb_ratings);
+
+    console.log(score);
+    const sorted = sortMovies(movies,omdb_ratings,score);
+    console.log(sorted);
+
     outputMovies(movies);
 
   } catch (er) {
