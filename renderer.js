@@ -10,7 +10,7 @@ const api_keyOMDb = "a0eda058";
 
 const el_movies = document.querySelector(".movies");
 
-async function requestAPI(request){
+async function requestAPI(request) {
   const response = await fetch(request);
   const data = await response.json();
   return data;
@@ -25,21 +25,58 @@ async function getMovies() {
   return data["results"];
 }
 
-async function getMoviesOMdbApi(movies) {
-  ratingOMdb = [];
+async function getRatingsOMdbApi(movies) {
+  let ratingsOMdb = [];
 
-  movies.forEach(async (movie) => {
-      const request = new Request(
-        omdb_url + "?apikey=" + api_keyOMDb + "&t=" + movie["original_title"]
-      );
-      const data = await requestAPI(request);
-      if (data["Error"] == "Movie not found!")
-        ratingOMdb.push('notFound');
-      else
-        ratingOMdb.push(data["Ratings"]);
-        
-  });
-  return ratingOMdb;
+  for (let i = 0; i < movies.length; i++) {
+    const movie = movies[i];
+    const request = new Request(
+      omdb_url + "?apikey=" + api_keyOMDb + "&t=" + movie["original_title"]
+    );
+    const data = await requestAPI(request);
+    if (data["Error"] == "Movie not found!") ratingsOMdb.push(null);
+    else {
+      const ratings = data["Ratings"];
+      let ratingsConverted = [];
+      ratings.forEach((rating) => {
+        let src;
+        if (rating["Source"] == "Internet Movie Database") src = "imdb";
+        if (rating["Source"] == "Rotten Tomatoes") src = "rotten";
+        if (rating["Source"] == "Metacritic") src = "meta";
+        ratingsConverted.push([src, convertRating(rating["Value"])]);
+      });
+      ratingsOMdb.push(ratingsConverted);
+    }
+  }
+
+  return ratingsOMdb;
+}
+
+function scoreEval(movies, ratings) {
+  let score = [];
+  for (let i = 0; i < movies.length; i++) {
+    const movie = movies[i];
+
+    if (ratings[i] == null) score[i] = movie['vote_average'];
+    else {
+      score[i] = movie['vote_average'];
+      for (let j = 0; j < ratings[i].length; j++) {score[i] += ratings[i][j][1]};
+      score[i] = (score[i] / (ratings[i].length + 1)).toFixed(1)
+    }
+  }
+
+  return score;
+}
+
+function convertRating(string) {
+  let rating;
+
+  if (string == "100%" || string == "100/100" || string == "10/10") return 10;
+
+  if (string[1] == ".") rating = parseFloat(string.slice(0, 3));
+  else rating = parseFloat(string.slice(0, 2)) / 10;
+
+  return rating;
 }
 
 function outputMovies(movies) {
@@ -57,11 +94,15 @@ function outputMovies(movies) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  let movies;
   try {
-    movies = await getMovies();
-    omdb_rating = await getMoviesOMdbApi(movies);
+    const movies = await getMovies();
+    const omdb_ratings = await getRatingsOMdbApi(movies);
+    let score = [];
+    
+    score = scoreEval(movies,omdb_ratings)
+    
     outputMovies(movies);
+
   } catch (er) {
     console.log("Erro");
     console.log(er);
