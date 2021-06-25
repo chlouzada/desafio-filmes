@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://api.themoviedb.org/; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' https://api.themoviedb.org/; script-src 'self'"> -->
-    
     <title>Rank de Filmes</title>
-
     <!-- Style -->
-    <link href="style.css" rel="stylesheet" type="text/css"/>
+    <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <header>
+      <!-- <h1>Top Filmes</h1> -->
+      <form class="search-form">
+        <input type="text" value="" />
+        <a class="btn search ">Buscar</a>
+      </form>
+      <div class="nav">
+        <a class="btn top ">Melhores</a>
+        <a class="btn trend ">Tendências</a>
+      </div>
+    </header>
+
     <!-- Content -->
-    <h1>Top Filmes</h1>
-    
-    <section class='movies'>
-    </section>
+    <section class="movies"></section>
 
     <!-- Scripts -->
     <script src="./renderer.js"></script>

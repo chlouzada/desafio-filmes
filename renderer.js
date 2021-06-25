@@ -1,6 +1,7 @@
 const tmdb_url = "https://api.themoviedb.org/3/";
 const tmdb_top = "movie/top_rated";
 const tmdb_trendind = "trending/movie/week";
+const tmdb_search = "search/movie";
 const tmdb_image = "https://image.tmdb.org/t/p/w500";
 const locale = "pt-BR";
 
@@ -8,7 +9,11 @@ const omdb_url = "http://www.omdbapi.com/";
 const api_key = "0f6d8485e4e96212071d0548796a9818";
 const api_keyOMDb = "a0eda058";
 
+const el_top = document.querySelector(".top")
+const el_trend = document.querySelector(".trend")
 const el_movies = document.querySelector(".movies");
+const el_inputSearch = document.querySelector("input");
+const el_buscar = document.querySelector(".search")
 
 /**
  *
@@ -21,14 +26,24 @@ async function requestAPI(request) {
 }
 
 /**
- *
- *
+ * 
+ * Gera URL para Request ao TMDB
  */
-async function getMovies() {
-  // let request = new Request(
-  //   tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale
-  // );
-  const request = new Request("./teste.json");
+function urlTMDB(top = true, string = ''){
+  let url = ''
+  if(string.length) url = tmdb_url + tmdb_search + "?api_key=" + api_key + "&language=" + locale + '&query=' + string;
+  else if (top) url = tmdb_url + tmdb_top + "?api_key=" + api_key + "&language=" + locale;
+  else url = tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale; 
+
+  return url
+}
+
+/**
+ *
+ * Carrega os filmes do TMDB
+ */
+async function getMovies(top, string = '') {
+  let request = new Request(urlTMDB(top,string));
   const data = await requestAPI(request);
   return data["results"];
 }
@@ -119,8 +134,6 @@ function outputMovies(movies) {
         if (r[0] == "rotten") rotten = r[1];
         if (r[0] == "meta") meta = r[1];
       });
-
-    console.log(ratings);
     output += `
               <div>
                 <img src=${tmdb_image}${element["movie"]["poster_path"]} alt="Poster ${element["movie"]["title"]}"/>
@@ -159,17 +172,38 @@ function sortMovies(movies, ratings, score) {
   return unsorted;
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function loadMovies(top = true, string = ''){
   try {
-    const movies = await getMovies();
+    loading();
+    const movies = await getMovies(top,string);
+
     const omdb_ratings = await getRatingsOMdbApi(movies);
     let score = scoreEval(movies, omdb_ratings);
 
     const sorted = sortMovies(movies, omdb_ratings, score);
-
+    el_movies.classList.remove('loading');
     outputMovies(sorted);
   } catch (er) {
     console.log("Erro");
     console.log(er);
   }
+}
+
+function loading(){
+  el_movies.classList.add('loading')
+  el_movies.innerHTML = '';
+}
+
+document.addEventListener("DOMContentLoaded", loadMovies(true));
+
+el_top.addEventListener("click", function(){
+  loadMovies()
+});
+
+el_trend.addEventListener("click", function(){
+  loadMovies(false)
+});
+
+el_buscar.addEventListener("click", function(){
+  loadMovies(false,el_inputSearch.value)
 });
