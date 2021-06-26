@@ -1,5 +1,5 @@
 body {
-  margin: 1rem;
+  margin: 0;
 }
 
 h1,
@@ -8,42 +8,45 @@ p {
   font-family: Arial;
 }
 
-body > h1 {
-  text-align: center;
+header {
+  padding: 0 1rem 0 1rem;
+  background-color: hsla(0, 0%, 95%, 0.75)
 }
 
 .movies {
+  margin: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.movies > div {
+.movie-item {
   display: flex;
   align-items: center;
   box-shadow: -1px 1px 3px black;
   border-radius: 10px 0 0 10px;
 }
 
-.movies > div::after {
+.movie-item::after {
   content: "";
   width: 5px;
   height: 200px;
   background-color: #bdbdbd;
 }
 
-.movies > div > img {
+.movie-item > img {
   width: 150px;
   height: 200px;
   border-radius: 10px 0 0 10px;
 }
 
-.movies > div > h2 {
+.movie-title h2,
+p {
   margin-left: 1rem;
 }
 
 @media (max-width: 900px) {
-  .movies > div > h2 {
+  .movie-title {
     max-width: 20rem;
   }
 }
@@ -61,7 +64,7 @@ body > h1 {
   padding-left: 1rem;
   text-align: center;
   background-size: contain !important;
-  width: 4rem;
+  width: 3.8rem;
   font-size: 20px;
 }
 

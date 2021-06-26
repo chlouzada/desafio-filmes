@@ -15,6 +15,9 @@ const el_movies = document.querySelector(".movies");
 const el_inputSearch = document.querySelector("input");
 const el_buscar = document.querySelector(".search")
 
+let pages;
+let page;
+
 /**
  *
  * Realiza o fetch a API e retorna o JSON da resposta
@@ -45,6 +48,8 @@ function urlTMDB(top = true, string = ''){
 async function getMovies(top, string = '') {
   let request = new Request(urlTMDB(top,string));
   const data = await requestAPI(request);
+  pages = data["total_pages"];
+  page = data["page"];
   return data["results"];
 }
 
@@ -135,9 +140,9 @@ function outputMovies(movies) {
         if (r[0] == "meta") meta = r[1];
       });
     output += `
-              <div>
+              <div class="movie-item">
                 <img src=${tmdb_image}${element["movie"]["poster_path"]} alt="Poster ${element["movie"]["title"]}"/>
-                <h2>${element["movie"]["title"]}</h2>
+                <div class="movie-title"><h2>${element["movie"]["title"]}</h2><p>${element["movie"]["original_title"]}</p></div>
                 <div class="ratings">
                   <p>${element["score"]}</p>
                   <p>${tmdb}</p>
@@ -172,16 +177,20 @@ function sortMovies(movies, ratings, score) {
   return unsorted;
 }
 
+/**
+ * 
+ * Carrega a lista de filmes
+ */
 async function loadMovies(top = true, string = ''){
   try {
     loading();
     const movies = await getMovies(top,string);
-
     const omdb_ratings = await getRatingsOMdbApi(movies);
-    let score = scoreEval(movies, omdb_ratings);
 
+    let score = scoreEval(movies, omdb_ratings);
     const sorted = sortMovies(movies, omdb_ratings, score);
-    el_movies.classList.remove('loading');
+
+    el_movies.classList.remove('loading'); // End Loading
     outputMovies(sorted);
   } catch (er) {
     console.log("Erro");
@@ -189,6 +198,10 @@ async function loadMovies(top = true, string = ''){
   }
 }
 
+/**
+ * 
+ * Animação de loading
+ */
 function loading(){
   el_movies.classList.add('loading')
   el_movies.innerHTML = '';
