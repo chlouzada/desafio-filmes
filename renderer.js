@@ -9,11 +9,11 @@ const omdb_url = "http://www.omdbapi.com/";
 const api_key = "0f6d8485e4e96212071d0548796a9818";
 const api_keyOMDb = "a0eda058";
 
-const el_top = document.querySelector(".top")
-const el_trend = document.querySelector(".trend")
+const el_top = document.querySelector(".top");
+const el_trend = document.querySelector(".trend");
 const el_movies = document.querySelector(".movies");
 const el_inputSearch = document.querySelector("input");
-const el_buscar = document.querySelector(".search")
+const el_buscar = document.querySelector(".search");
 
 let pages;
 let page;
@@ -29,24 +29,36 @@ async function requestAPI(request) {
 }
 
 /**
- * 
+ *
  * Gera URL para Request ao TMDB
  */
-function urlTMDB(top = true, string = ''){
-  let url = ''
-  if(string.length) url = tmdb_url + tmdb_search + "?api_key=" + api_key + "&language=" + locale + '&query=' + string;
-  else if (top) url = tmdb_url + tmdb_top + "?api_key=" + api_key + "&language=" + locale;
-  else url = tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale; 
+function urlTMDB(top = true, string = "") {
+  let url = "";
+  if (string.length)
+    url =
+      tmdb_url +
+      tmdb_search +
+      "?api_key=" +
+      api_key +
+      "&language=" +
+      locale +
+      "&query=" +
+      string;
+  else if (top)
+    url = tmdb_url + tmdb_top + "?api_key=" + api_key + "&language=" + locale;
+  else
+    url =
+      tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale;
 
-  return url
+  return url;
 }
 
 /**
  *
  * Carrega os filmes do TMDB
  */
-async function getMovies(top, string = '') {
-  let request = new Request(urlTMDB(top,string));
+async function getMovies(top, string = "") {
+  let request = new Request(urlTMDB(top, string));
   const data = await requestAPI(request);
   pages = data["total_pages"];
   page = data["page"];
@@ -143,8 +155,8 @@ function outputMovies(movies) {
               <div class="movie-item">
                 <img src=${tmdb_image}${element["movie"]["poster_path"]} alt="Poster ${element["movie"]["title"]}"/>
                 <div class="movie-title"><h2>${element["movie"]["title"]}</h2><p>${element["movie"]["original_title"]}</p></div>
+                <div class="score"><p>${element["score"]}</p></div>
                 <div class="ratings">
-                  <p>${element["score"]}</p>
                   <p>${tmdb}</p>
                   <p>${imdb}</p>
                   <p>${rotten}</p>
@@ -178,19 +190,19 @@ function sortMovies(movies, ratings, score) {
 }
 
 /**
- * 
+ *
  * Carrega a lista de filmes
  */
-async function loadMovies(top = true, string = ''){
+async function loadMovies(top = true, string = "") {
   try {
     loading();
-    const movies = await getMovies(top,string);
+    const movies = await getMovies(top, string);
     const omdb_ratings = await getRatingsOMdbApi(movies);
 
     let score = scoreEval(movies, omdb_ratings);
     const sorted = sortMovies(movies, omdb_ratings, score);
 
-    el_movies.classList.remove('loading'); // End Loading
+    el_movies.classList.remove("loading"); // End Loading
     outputMovies(sorted);
   } catch (er) {
     console.log("Erro");
@@ -199,24 +211,26 @@ async function loadMovies(top = true, string = ''){
 }
 
 /**
- * 
+ *
  * Animação de loading
  */
-function loading(){
-  el_movies.classList.add('loading')
-  el_movies.innerHTML = '';
+function loading() {
+  el_movies.classList.add("loading");
+  el_movies.innerHTML = "";
 }
 
-document.addEventListener("DOMContentLoaded", loadMovies(true));
+document.addEventListener("DOMContentLoaded", function () {
+  loadMovies(true);
 
-el_top.addEventListener("click", function(){
-  loadMovies()
-});
+  el_top.addEventListener("click", function () {
+    loadMovies();
+  });
 
-el_trend.addEventListener("click", function(){
-  loadMovies(false)
-});
+  el_trend.addEventListener("click", function () {
+    loadMovies(false);
+  });
 
-el_buscar.addEventListener("click", function(){
-  loadMovies(false,el_inputSearch.value)
+  el_buscar.addEventListener("click", function () {
+    loadMovies(false, el_inputSearch.value);
+  });
 });
