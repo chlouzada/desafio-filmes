@@ -5,6 +5,7 @@ function createWindow () {
   const win = new BrowserWindow({
     width: 1200,
     height: 900,
+    icon: __dirname + '/assets/icon.png'
   })
   win.setMenuBarVisibility(false)
   win.loadFile('index.html')

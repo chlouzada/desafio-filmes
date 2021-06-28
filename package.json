@@ -1,5 +1,5 @@
 {
-  "name": "desafio-filmes",
+  "name": "Filmes",
   "version": "1.0.0",
   "description": "listagem de filmes por rank",
   "main": "main.js",
@@ -32,7 +32,9 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./assets/icon.png"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
