@@ -6,7 +6,7 @@ function createWindow () {
     width: 1200,
     height: 900,
   })
-
+  win.setMenuBarVisibility(false)
   win.loadFile('index.html')
 }
 

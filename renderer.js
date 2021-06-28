@@ -13,6 +13,7 @@ const el_top = document.querySelector(".top");
 const el_trend = document.querySelector(".trend");
 const el_movies = document.querySelector(".movies");
 const el_pages = document.querySelector(".paginate");
+const el_page_counter = document.querySelector(".paginate p");
 const el_page_btn = document.querySelectorAll(".paginate a");
 const el_inputSearch = document.querySelector("input");
 const el_buscar = document.querySelector(".search");
@@ -72,8 +73,6 @@ function urlTMDB(top = true, string = "", page = 1) {
       page;
 
   lastQuery = [top, string, page];
-  console.log(url);
-
   return url;
 }
 
@@ -85,7 +84,6 @@ async function getMovies(top, string = "", page) {
   let request = new Request(urlTMDB(top, string, page));
   const data = await requestAPI(request);
   pages = data["total_pages"];
-  page = data["page"];
   return data["results"];
 }
 
@@ -218,7 +216,6 @@ function sortMovies(movies, ratings, score) {
  * Carrega a lista de filmes
  */
 async function loadMovies(top = true, string = "", page = 1) {
-  console.log(top, string, page);
   try {
     toggleLoading();
     const movies = await getMovies(top, string, page);
@@ -231,6 +228,11 @@ async function loadMovies(top = true, string = "", page = 1) {
     else el_page_btn[0].style.display = "block";
 
     toggleLoading();
+
+    el_page_counter.innerHTML = `
+                                ${page} de ${pages}
+                                `;
+
     outputMovies(sorted);
   } catch (er) {
     console.log("Erro");
@@ -267,7 +269,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   el_buscar.addEventListener("click", function () {
-    console.log("s");
     loadMovies(false, el_inputSearch.value);
   });
 

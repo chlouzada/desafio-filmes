@@ -170,3 +170,9 @@ p {
   margin-right: 1rem;
   gap: 1rem;
 }
+
+.paginate p {
+  display: flex;
+  align-items: center;
+}
+
