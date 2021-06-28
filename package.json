@@ -32,14 +32,13 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {
-        "icon": "./assets/icon.png"
-      },
+      "packagerConfig": {},
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "desafio_filmes"
+            "name": "Filmes",
+            "setupExe": "Filmes - Installation.exe"
           }
         },
         {
