@@ -12,11 +12,15 @@ const api_keyOMDb = "a0eda058";
 const el_top = document.querySelector(".top");
 const el_trend = document.querySelector(".trend");
 const el_movies = document.querySelector(".movies");
+const el_pages = document.querySelector(".paginate");
+const el_page_btn = document.querySelectorAll(".paginate a");
 const el_inputSearch = document.querySelector("input");
 const el_buscar = document.querySelector(".search");
 
 let pages;
-let page;
+let lastQuery;
+
+let isLoading = false;
 
 /**
  *
@@ -32,7 +36,7 @@ async function requestAPI(request) {
  *
  * Gera URL para Request ao TMDB
  */
-function urlTMDB(top = true, string = "") {
+function urlTMDB(top = true, string = "", page = 1) {
   let url = "";
   if (string.length)
     url =
@@ -43,12 +47,32 @@ function urlTMDB(top = true, string = "") {
       "&language=" +
       locale +
       "&query=" +
-      string;
+      string +
+      "&page=" +
+      page;
   else if (top)
-    url = tmdb_url + tmdb_top + "?api_key=" + api_key + "&language=" + locale;
+    url =
+      tmdb_url +
+      tmdb_top +
+      "?api_key=" +
+      api_key +
+      "&language=" +
+      locale +
+      "&page=" +
+      page;
   else
     url =
-      tmdb_url + tmdb_trendind + "?api_key=" + api_key + "&language=" + locale;
+      tmdb_url +
+      tmdb_trendind +
+      "?api_key=" +
+      api_key +
+      "&language=" +
+      locale +
+      "&page=" +
+      page;
+
+  lastQuery = [top, string, page];
+  console.log(url);
 
   return url;
 }
@@ -57,8 +81,8 @@ function urlTMDB(top = true, string = "") {
  *
  * Carrega os filmes do TMDB
  */
-async function getMovies(top, string = "") {
-  let request = new Request(urlTMDB(top, string));
+async function getMovies(top, string = "", page) {
+  let request = new Request(urlTMDB(top, string, page));
   const data = await requestAPI(request);
   pages = data["total_pages"];
   page = data["page"];
@@ -193,16 +217,20 @@ function sortMovies(movies, ratings, score) {
  *
  * Carrega a lista de filmes
  */
-async function loadMovies(top = true, string = "") {
+async function loadMovies(top = true, string = "", page = 1) {
+  console.log(top, string, page);
   try {
-    loading();
-    const movies = await getMovies(top, string);
+    toggleLoading();
+    const movies = await getMovies(top, string, page);
     const omdb_ratings = await getRatingsOMdbApi(movies);
 
     let score = scoreEval(movies, omdb_ratings);
     const sorted = sortMovies(movies, omdb_ratings, score);
 
-    el_movies.classList.remove("loading"); // End Loading
+    if (page == 1) el_page_btn[0].style.display = "none";
+    else el_page_btn[0].style.display = "block";
+
+    toggleLoading();
     outputMovies(sorted);
   } catch (er) {
     console.log("Erro");
@@ -214,9 +242,17 @@ async function loadMovies(top = true, string = "") {
  *
  * Animação de loading
  */
-function loading() {
-  el_movies.classList.add("loading");
-  el_movies.innerHTML = "";
+function toggleLoading() {
+  if (isLoading == false) {
+    el_movies.classList.add("loading");
+    el_movies.innerHTML = "";
+    el_pages.style.display = "none";
+    isLoading = true;
+  } else {
+    el_movies.classList.remove("loading"); // End Loading
+    el_pages.style.display = "flex";
+    isLoading = false;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -231,6 +267,15 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   el_buscar.addEventListener("click", function () {
+    console.log("s");
     loadMovies(false, el_inputSearch.value);
+  });
+
+  el_page_btn[0].addEventListener("click", function () {
+    loadMovies(lastQuery[0], lastQuery[1], lastQuery[2] - 1);
+  });
+
+  el_page_btn[1].addEventListener("click", function () {
+    loadMovies(lastQuery[0], lastQuery[1], lastQuery[2] + 1);
   });
 });

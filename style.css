@@ -18,7 +18,7 @@ header {
 }
 
 .movies {
-  margin: 1rem;
+  margin: 0 1rem 2rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -162,4 +162,11 @@ p {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.paginate {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 1rem;
+  gap: 1rem;
 }
