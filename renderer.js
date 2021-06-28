@@ -216,6 +216,7 @@ function sortMovies(movies, ratings, score) {
  * Carrega a lista de filmes
  */
 async function loadMovies(top = true, string = "", page = 1) {
+  if(!isLoading)
   try {
     toggleLoading();
     const movies = await getMovies(top, string, page);
